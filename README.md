@@ -1,104 +1,61 @@
-## OilSpillNet: AI-Powered Marine Oil Spill Detection & Analysis
+# Oil Spill Identification in SAR Imagery Using Computer Vision Techniques
 
-### Elevating Environmental Monitoring with AI
+This project applies computer vision methods to detect and classify oil spills in Synthetic-Aperture Radar (SAR) satellite images. By leveraging specialized image processing and segmentation techniques, the approach provides a practical way to distinguish oil spills from the surrounding sea surface, offering insights into spill extent and intensity.
 
-**OilSpillNet** is an advanced AI-driven platform designed to detect, analyze, and assess oil spills from satellite and aerial Synthetic-Aperture Radar (SAR) imagery. By combining state-of-the-art computer vision and machine learning, OilSpillNet delivers rapid, actionable insights for environmental agencies, researchers, and first responders—helping to safeguard marine ecosystems worldwide.
+## Introduction
 
-## Why Choose OilSpillNet?
+Marine oil spills, often resulting from increased shipping activity and routine vessel operations, pose significant environmental risks. Traditional optical satellite imagery can be hindered by cloud cover or darkness, but SAR systems overcome these limitations, capturing reliable images day and night in any weather. SAR’s unique interaction with surfaces generates characteristic speckle (salt-and-pepper) noise, which complicates oil spill detection. This project develops and evaluates a series of image processing steps to improve SAR image clarity, enabling clear identification and classification of oil spills to support timely environmental response.
 
-- **AI-Powered Detection**: Immediate, high-accuracy identification of oil spills under diverse environmental conditions.
-- **Comprehensive Analysis**: Quantitative assessment of spill area, perimeter, spread rate, and severity.
-- **Graphical Insights**: Interactive visualizations of spill evolution and affected regions.
-- **Environmental Impact Scoring**: AI-driven severity estimation for prioritizing response efforts.
-- **Curated Resources**: Access to case studies, best practices, and regulatory guidelines for spill management.
-- **Regular Reports**: Customized email updates and PDF reports for stakeholders and authorities.
+## Methodology
 
-## Experience OilSpillNet
+The analysis uses three diverse SAR images from the Sentinel-1 satellite, each representing different challenges for spill detection.
 
-**Live Deployment:** [https://oilspillnet.vercel.app](#) (placeholder—replace with your deployment link)  
-**Watch the Demo:** [YouTube Video](#) (placeholder for demo link)
+### Image Type 1: Noisy Image with a Concentrated Oil Spill
 
-## Technology
+Salt-and-pepper noise is prominent in this image. A median filter is applied to reduce this noise, preserving edges while suppressing outliers. The resulting image is inverted to facilitate morphological operations, making the oil spill (darker than the sea) appear white. By analyzing the histogram, a threshold is chosen to segment the spill from the background. After thresholding, a morphological opening operation is used to eliminate small artifacts, retaining only significant spill regions. Finally, vertical and horizontal edge detection highlights the spill’s outline for clear visualization.
 
-### System Architecture
+### Image Type 2: Smooth Image with Multiple Dispersed Spills
 
-OilSpillNet is built on a robust, multi-service architecture for performance, scalability, and security:
+This image exhibits a smoother texture and scattered spills. The same processing pipeline as above is applied, demonstrating the robustness of the methods even when spills are distributed rather than concentrated.
 
-| Component          | Technologies & Tools                                      |
-|--------------------|----------------------------------------------------------|
-| **Frontend**       | React, Next.js, Tailwind CSS, Mapbox GL, Chart.js        |
-| **Backend**        | FastAPI, Python (OpenCV, scikit-image, scikit-learn), MongoDB, Firestore |
-| **AI & Vision**    | TensorFlow/Keras, Hugging Face Transformers (for advanced detection), Google Vision API (optional) |
-| **Data Pipeline**  | Celery, Redis (for batch processing), AWS S3 (for image storage) |
-| **Deployment**     | Vercel, Google Cloud Run, MongoDB Atlas, Firebase        |
+### Image Type 3: Low-Contrast Image with Shallow Spill Boundaries
 
-## Local Setup Guide
+Here, the spill barely stands out from the sea due to low contrast. Global histogram equalization stretches the intensity range, increasing contrast and making the spill more visible. After equalization, thresholding and morphological opening are repeated to isolate the spill. Edge detection further refines the spill’s boundary.
 
-```bash
-git clone https://github.com/yourusername/OilSpillNet.git
-cd OilSpillNet
-```
+## Results & Analysis
 
-### 1. **Firebase Configuration**
+Each processed image demonstrates the effectiveness of tailored combinations of median filtering, histogram equalization, thresholding, morphological operations, and edge detection. The workflow successfully adapts to the varying noise levels, contrast conditions, and spill patterns found in real-world SAR images.
 
-- **Create a new Firebase project** and add a Web App.
-- **Enable Authentication**: Email/Password, Google.
-- **Retrieve** your `firebaseConfig` from Project Settings > Web App.
-- **Set up** `.env` in the frontend folder (see `.env.sample` for required variables).
-- **Generate a private key** in Firebase Service Accounts and add to backend `.env`.
+- **`Image Type 1`**
+    
+    ![image](https://user-images.githubusercontent.com/43881544/206901712-564cd93c-1181-4203-9fa0-54e7d6372bea.png)
+    
+    ![image](https://user-images.githubusercontent.com/43881544/206901725-8c4244cb-b00f-498f-a019-85423a35080e.png)
+    
+    ![image](https://user-images.githubusercontent.com/43881544/206901735-c3f58316-0735-4bf5-adf5-93ec502e78de.png)
+    
+- **`Image Type 2`**
+    
+    ![image](https://user-images.githubusercontent.com/43881544/206901747-082fd38b-c363-4cd1-8301-964ec640c9d3.png)
+    
+    ![image](https://user-images.githubusercontent.com/43881544/206901752-10867337-06ad-475a-8a98-d7f54d91cb0b.png)
+    
+    ![image](https://user-images.githubusercontent.com/43881544/206901756-0967dda3-c8d2-4ab7-9014-1f62c448d70a.png)
+    
+- **`Image Type 3`**
+    
+    ![image](https://user-images.githubusercontent.com/43881544/206901762-912c9e98-e1f8-43cf-afa5-8f138ac1307b.png)
+    
+    ![image](https://user-images.githubusercontent.com/43881544/206901771-2d3364b4-a781-4bb0-8b0c-2399da0df8d7.png)
+    
+    ![image](https://user-images.githubusercontent.com/43881544/206901779-d2097849-b433-45da-ba43-5760ec2609d6.png)
+    
+    ![image](https://user-images.githubusercontent.com/43881544/206901784-41a6db0f-f8bc-41e2-be95-872ff01b5811.png)
+    
+    ![image](https://user-images.githubusercontent.com/43881544/206901790-e6a29034-5108-49e4-8131-f1666d011118.png)
 
-### 2. **Google Vision API & Gemini Key**
+## Conclusion
 
-- **Obtain Google Vision API and Gemini API keys** from Google Cloud Console.
-- **Add keys** to backend `.env` as per `.env.sample`.
+Using a combination of median filtering, average filtering, histogram equalization, intensity thresholding, edge detection, and morphological opening, this project reliably identifies oil spills in diverse SAR imagery. The methods are effective across images with high noise, smooth features, and low contrast, demonstrating both flexibility and robustness. This approach provides a practical foundation for automated oil spill monitoring using SAR data.
 
-### 3. **MongoDB Atlas**
-
-- **Create a MongoDB Atlas account** and a new cluster.
-- **Retrieve your connection URI** and add to backend `.env`.
-
-### 4. **Cloud Storage**
-
-- **Set up AWS S3** (or equivalent) for image storage; add credentials to backend `.env`.
-
-### 5. **Server Connections**
-
-- **Backend URL**: Add to frontend `.env` (e.g., `REACT_APP_API_LINK=http://localhost:8000`).
-- **WebSocket URL** (if applicable): Add to frontend `.env` (e.g., `REACT_APP_WS_LINK=ws://localhost:8802`).
-
-### 6. **Installation & Launch**
-
-- **Ensure Python 3.10+ and Node.js 18+ are installed.**
-- **Install dependencies**:
-  - Backend: `pip install -r requirements.txt`
-  - Frontend: `npm install`
-  - (Optional) WebSocket server: `npm install` and `node index.js`
-- **Launch servers**:
-  - **Backend**: `uvicorn main:app --reload`
-  - **Frontend**: `npm run dev`
-  - **WebSocket Server** (if used): `node index.js`
-
-## Website Preview
-
-| Page       | Key Features                                                     |
-|------------|-----------------------------------------------------------------|
-| **Home**   | Quick spill detection upload, recent incidents, live map         |
-| **Upload** | Drag-and-drop SAR imagery, batch processing, progress tracking   |
-| **Analysis** | Spill visualization, severity scoring, historical trends, export reports |
-| **Resources** | Case studies, regulations, response guidelines                  |
-| **Account**   | User history, saved reports, notification settings              |
-
-## Recognition
-
-**🏆 Recognized at [Relevant Hackathon/Conference Name]** (customize as applicable)
-
-## Ready to Make an Impact
-
-**OilSpillNet** stands out for its seamless blend of cutting-edge AI, environmental science, and user-centric design. Whether you’re a government agency, environmental NGO, researcher, or developer, OilSpillNet delivers a powerful, scalable, and secure platform for marine protection—all with transparent setup and clear best practices.
-
-All instructions, tech stack details, and deployment steps are presented for clarity and ease of use—prioritizing both performance and environmental responsibility.
-
-**Get started today—clone, configure, and deploy.**  
-**Contribute, customize, and help protect our oceans for generations to come.**
-
-[1] https://github.com/kaps117/MentalHealthAi
+---
