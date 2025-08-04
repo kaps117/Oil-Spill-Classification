@@ -1,155 +1,104 @@
-```markdown
-# OilSpillSense: SAR Image Analysis for Oil Spill Detection and Severity Estimation
+## OilSpillNet: AI-Powered Marine Oil Spill Detection & Analysis
 
----
+### Elevating Environmental Monitoring with AI
 
-### Project Overview
+**OilSpillNet** is an advanced AI-driven platform designed to detect, analyze, and assess oil spills from satellite and aerial Synthetic-Aperture Radar (SAR) imagery. By combining state-of-the-art computer vision and machine learning, OilSpillNet delivers rapid, actionable insights for environmental agencies, researchers, and first responders—helping to safeguard marine ecosystems worldwide.
 
-**OilSpillSense** is a computer vision and image processing pipeline leveraging **Synthetic-Aperture Radar (SAR)** imagery to automatically detect, segment, and assess the severity of oil spills in marine environments. Unlike traditional projects focused solely on spill identification, this work extends the analysis to **quantitative severity estimation**, providing actionable data for rapid environmental response.
+## Why Choose OilSpillNet?
 
----
+- **AI-Powered Detection**: Immediate, high-accuracy identification of oil spills under diverse environmental conditions.
+- **Comprehensive Analysis**: Quantitative assessment of spill area, perimeter, spread rate, and severity.
+- **Graphical Insights**: Interactive visualizations of spill evolution and affected regions.
+- **Environmental Impact Scoring**: AI-driven severity estimation for prioritizing response efforts.
+- **Curated Resources**: Access to case studies, best practices, and regulatory guidelines for spill management.
+- **Regular Reports**: Customized email updates and PDF reports for stakeholders and authorities.
 
-### Key Features & Differences
+## Experience OilSpillNet
 
-- **Automated Severity Scoring:** Calculates spill area, perimeter, and spread rate—crucial for prioritizing response efforts.
-- **Adaptive Image Processing:** Employs adaptive filtering and contrast enhancement tailored to each image’s unique noise and illumination characteristics.
-- **Machine Learning Integration:** Uses statistical features from segmented spills to classify and score their severity, moving beyond simple binary detection.
-- **Clear, Interpretable Outputs:** Delivers both visual segmentation masks and tabular metrics, supporting informed decision-making.
+**Live Deployment:** [https://oilspillnet.vercel.app](#) (placeholder—replace with your deployment link)  
+**Watch the Demo:** [YouTube Video](#) (placeholder for demo link)
 
----
+## Technology
 
-### Installation
+### System Architecture
 
-1. **Clone the repository:**
+OilSpillNet is built on a robust, multi-service architecture for performance, scalability, and security:
 
-```
-git clone https://github.com/yourusername/OilSpillSense.git
-cd OilSpillSense
-```
+| Component          | Technologies & Tools                                      |
+|--------------------|----------------------------------------------------------|
+| **Frontend**       | React, Next.js, Tailwind CSS, Mapbox GL, Chart.js        |
+| **Backend**        | FastAPI, Python (OpenCV, scikit-image, scikit-learn), MongoDB, Firestore |
+| **AI & Vision**    | TensorFlow/Keras, Hugging Face Transformers (for advanced detection), Google Vision API (optional) |
+| **Data Pipeline**  | Celery, Redis (for batch processing), AWS S3 (for image storage) |
+| **Deployment**     | Vercel, Google Cloud Run, MongoDB Atlas, Firebase        |
 
-2. **Create a virtual environment (recommended):**
+## Local Setup Guide
 
-```
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. **Install dependencies:**
-
-```
-pip install -r requirements.txt
-```
-
----
-
-### Dataset
-
-- **Source:** Sentinel-1 SAR images, focusing on regions with documented oil spills.
-- **Format:** GeoTIFF or other compatible SAR image formats.
-- **Folder Structure:** Place your SAR images in the `./data` directory.
-
----
-
-### Usage
-
-**Run the pipeline on a sample image:**
-
-```
-python main.py --image_path ./data/your_spill_image.tif
+```bash
+git clone https://github.com/yourusername/OilSpillNet.git
+cd OilSpillNet
 ```
 
-**Command-line arguments:**
+### 1. **Firebase Configuration**
 
-| Argument         | Description                                    | Default            |
-|------------------|------------------------------------------------|--------------------|
-| `--image_path`   | Path to the SAR image to analyze               | Required           |
-| `--output_dir`   | Directory for results and visualizations       | `./results`        |
-| `--verbose`      | Print progress and debug information           | `False`            |
+- **Create a new Firebase project** and add a Web App.
+- **Enable Authentication**: Email/Password, Google.
+- **Retrieve** your `firebaseConfig` from Project Settings > Web App.
+- **Set up** `.env` in the frontend folder (see `.env.sample` for required variables).
+- **Generate a private key** in Firebase Service Accounts and add to backend `.env`.
 
----
+### 2. **Google Vision API & Gemini Key**
 
-### Methodology
+- **Obtain Google Vision API and Gemini API keys** from Google Cloud Console.
+- **Add keys** to backend `.env` as per `.env.sample`.
 
-```
-import cv2
-import numpy as np
-from skimage import exposure, filters, morphology
-from sklearn.ensemble import RandomForestClassifier
-import pandas as pd
+### 3. **MongoDB Atlas**
 
-# 1. Load and preprocess the SAR image
-image = cv2.imread(args.image_path, cv2.IMREAD_GRAYSCALE)
+- **Create a MongoDB Atlas account** and a new cluster.
+- **Retrieve your connection URI** and add to backend `.env`.
 
-# 2. Adaptive noise reduction
-denoised = cv2.fastNlMeansDenoising(image, None, h=10, templateWindowSize=7, searchWindowSize=21)
+### 4. **Cloud Storage**
 
-# 3. Contrast enhancement (CLAHE)
-clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
-enhanced = clahe.apply(denoised)
+- **Set up AWS S3** (or equivalent) for image storage; add credentials to backend `.env`.
 
-# 4. Adaptive thresholding
-thresh = cv2.adaptiveThreshold(enhanced, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
+### 5. **Server Connections**
 
-# 5. Morphological operations
-kernel = np.ones((5,5), np.uint8)
-opened = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel)
+- **Backend URL**: Add to frontend `.env` (e.g., `REACT_APP_API_LINK=http://localhost:8000`).
+- **WebSocket URL** (if applicable): Add to frontend `.env` (e.g., `REACT_APP_WS_LINK=ws://localhost:8802`).
 
-# 6. Edge detection
-edges = cv2.Canny(opened, 100, 200)
+### 6. **Installation & Launch**
 
-# 7. Regionprops and feature extraction
-from skimage.measure import label, regionprops
-label_image = label(opened)
-regions = regionprops(label_image)
+- **Ensure Python 3.10+ and Node.js 18+ are installed.**
+- **Install dependencies**:
+  - Backend: `pip install -r requirements.txt`
+  - Frontend: `npm install`
+  - (Optional) WebSocket server: `npm install` and `node index.js`
+- **Launch servers**:
+  - **Backend**: `uvicorn main:app --reload`
+  - **Frontend**: `npm run dev`
+  - **WebSocket Server** (if used): `node index.js`
 
-# Extract features for each region
-features = []
-for region in regions:
-    features.append([
-        region.area,
-        region.perimeter,
-        region.mean_intensity,
-        region.eccentricity,
-    ])
-features = np.array(features)
+## Website Preview
 
-# 8. Severity estimation and classification (example: Random Forest)
-# Load your pre-trained model or train one with labeled data
-# clf = RandomForestClassifier(...)
-# severity_scores = clf.predict_proba(features)
+| Page       | Key Features                                                     |
+|------------|-----------------------------------------------------------------|
+| **Home**   | Quick spill detection upload, recent incidents, live map         |
+| **Upload** | Drag-and-drop SAR imagery, batch processing, progress tracking   |
+| **Analysis** | Spill visualization, severity scoring, historical trends, export reports |
+| **Resources** | Case studies, regulations, response guidelines                  |
+| **Account**   | User history, saved reports, notification settings              |
 
-# 9. Save results
-import matplotlib.pyplot as plt
-plt.imshow(edges, cmap='gray')
-plt.savefig(f"{args.output_dir}/edges.png")
+## Recognition
 
-results = pd.DataFrame(features, columns=['Area', 'Perimeter', 'Mean Intensity', 'Eccentricity'])
-results.to_csv(f"{args.output_dir}/spill_metrics.csv", index=False)
-```
+**🏆 Recognized at [Relevant Hackathon/Conference Name]** (customize as applicable)
 
----
+## Ready to Make an Impact
 
-### Output
+**OilSpillNet** stands out for its seamless blend of cutting-edge AI, environmental science, and user-centric design. Whether you’re a government agency, environmental NGO, researcher, or developer, OilSpillNet delivers a powerful, scalable, and secure platform for marine protection—all with transparent setup and clear best practices.
 
-- **Visualizations:** Edge-detected spill masks and enhanced images in `./results`.
-- **Metrics Table:** CSV file (`spill_metrics.csv`) with area, perimeter, intensity, and shape metrics for each detected spill.
-- **Severity Scores:** (If ML model is trained) probability scores for spill severity classes.
+All instructions, tech stack details, and deployment steps are presented for clarity and ease of use—prioritizing both performance and environmental responsibility.
 
----
+**Get started today—clone, configure, and deploy.**  
+**Contribute, customize, and help protect our oceans for generations to come.**
 
-### Customizing for Your Project
-
-- **Replace GitHub repo link** (`https://github.com/yourusername/OilSpillSense`) with your actual repository.
-- **Add your own trained ML model** for severity classification by extending the pipeline.
-- **Expand dataset** with more diverse SAR scenes for improved generalization.
-- **Integrate time-series analysis** (optional) to track spill growth over multiple images.
-
----
-
-### Contact
-
-For feedback, questions, or contributions, open an issue on GitHub or reach out via the repository’s contact page.
-
----
-```
-
+[1] https://github.com/kaps117/MentalHealthAi
